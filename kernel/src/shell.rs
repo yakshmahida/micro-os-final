@@ -379,7 +379,7 @@ impl Shell {
 
                 let _ = write!(
                     fmt,
-                    "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    {} MHz (Channel {})\n  Link Speed:   {} Mbps (MCS 9, 2x2 MIMO)\n  Signal:       {} dBm\n  Noise Floor:  {} dBm\n  SNR:          {} dB\n  State:        CONNECTED (authenticated, associated)",
+                    "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    {} MHz (Channel {})\n  Link Speed:   {} Mbps (MCS 9, 2x2 MIMO)\n  Signal:       {} dBm (Noise: {} dBm, SNR: {} dB)\n  IPv4 Address: 192.168.1.110/24 (Gateway: 192.168.1.1)\n  IPv6 Address: fe80::a6cf:12ff:fe7b:3e91/64\n  State:        CONNECTED (authenticated, associated)",
                     freq, channel, link_speed, signal, noise, snr
                 );
                 self.push_output(fmt.as_str());

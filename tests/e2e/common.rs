@@ -867,7 +867,7 @@ impl ShellDispatcher {
                 )
             }
             "wifi" => {
-                "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    5180 MHz (Channel 36)\n  Link Speed:   867 Mbps (MCS 9, 2x2 MIMO)\n  Signal:       -42 dBm\n  Noise Floor:  -95 dBm\n  SNR:          53 dB\n  State:        CONNECTED (authenticated, associated)".to_string()
+                "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    5180 MHz (Channel 36)\n  Link Speed:   867 Mbps (MCS 9, 2x2 MIMO)\n  Signal:       -42 dBm (Noise: -95 dBm, SNR: 53 dB)\n  IPv4 Address: 192.168.1.110/24 (Gateway: 192.168.1.1)\n  IPv6 Address: fe80::a6cf:12ff:fe7b:3e91/64\n  State:        CONNECTED (authenticated, associated)".to_string()
             }
             "net" => {
                 "Network Interface Configuration:\n  eth0 (VirtIO-Net PCI):\n    Link:    UP | Speed: 1000 Mbps | Duplex: Full\n    MAC:     52:54:00:12:34:56\n    IPv4:    192.168.1.105/24\n    IPv6:    fe80::5054:ff:fe12:3456/64\n    Gateway: 192.168.1.1\n    MTU:     1500 bytes\n    RX:      1024 packets (1507328 bytes)\n    TX:      512 packets (196608 bytes)\n    Errors:  0 dropped, 0 overruns, 0 collisions\n  lo (Loopback):\n    Link:    UP | MTU: 65536\n    IPv4:    127.0.0.1/8\n    IPv6:    ::1/128".to_string()

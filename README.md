@@ -51,6 +51,15 @@ Titanium Micro-OS is a freestanding, bare-metal x86_64 microkernel engineered co
 
 ---
 
+### 4. WiFi Telemetry & REST API Health Check (`wifi`, `ping`, `api`)
+*Live execution of the expanded networking commands inside VirtualBox, reporting 802.11ac signal/SNR metrics, ICMP gateway RTT, and JSON REST API health status.*
+
+![Titanium Micro-OS WiFi Status](screenshots/04_wifi_net.png)
+
+![Titanium Micro-OS API Health](screenshots/05_api_health.png)
+
+---
+
 ## System Architecture: 10-Layer Microkernel Stack
 
 ```text
@@ -121,7 +130,15 @@ The kernel prevents deadlock before resource allocation occurs using Dijkstra's 
 | `mem` | Inspects 64 KiB Bump Allocator | Used bytes, free bytes, visual ASCII memory bar |
 | `deadlock`| Runs Banker's safety verification algorithm | Current allocation matrix, safe sequence vector |
 | `info` | Displays hardware & academic identification | Host (MacBook Air M4), VM (VirtualBox x86), USN |
-| `web` | **Simulated Network Status Portal** | VirtIO adapter, IP (`192.168.1.105`), DNS, HTTP 200 |
+| `web` | **Simulated Network Portal** | VirtIO adapter, IP (`192.168.1.105`), DNS, HTTP 200 |
+| `wifi` | **WiFi Adapter Telemetry** | `wlan0` 802.11ac, SSID, channel, dBm signal, noise, SNR |
+| `net` | **Network Interface Config** | `eth0` & `lo` link state, MAC, RX/TX byte & packet counters |
+| `ip` | **IPv4/IPv6 Address Bindings** | Global & link-local addresses, default route, DNS servers |
+| `ping` | **ICMP Echo Simulation** | 4-packet gateway ping with live min/avg/max RTT statistics |
+| `dns` | **DNS Resolver & Cache** | Cloudflare/Google DNS reachability, local `.local` records, DoT |
+| `ports` | **Open Sockets & Listeners** | Active TCP/UDP ports (`22`, `80`, `443`, `3000`, `8080`, `53`) |
+| `api` | **REST API Health Endpoint** | JSON health payload (`/v1/health`), uptime, requests served |
+| `trace` | **Network Traceroute** | 6-hop route trace to `1.1.1.1` with per-hop RTT |
 | `reset` | Resets task queues and clears telemetry counters | Confirms clean scheduler state restoration |
 | `clear` | Clears output buffer in VGA dashboard | Clears shell pane while preserving UI panels |
 

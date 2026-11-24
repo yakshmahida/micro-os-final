@@ -367,7 +367,7 @@ fn t4_scenario_02_high_contention_deadlock_avoidance() {
 }
 
 /// `TC-T4-03`: Complete User Session: Boot, Shell & Audit.
-/// BIOS boot -> Splash -> TUI -> 9 commands (including `web`) -> Clear.
+/// BIOS boot -> Splash -> TUI -> 17 commands (including `web`, `wifi`, `ping`, `api`) -> Clear.
 #[test]
 fn t4_scenario_03_complete_user_session_boot_shell_audit() {
     let mut shell = ShellDispatcher::new();

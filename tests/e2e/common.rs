@@ -746,6 +746,14 @@ impl ShellDispatcher {
                     ("reset", "Reset shell state and telemetry"),
                     ("clear", "Clear shell output buffer"),
                     ("web", "Display simulated network portal & status viewer"),
+                    ("wifi", "Show WiFi adapter status and signal metrics"),
+                    ("net", "Display full network interface configuration"),
+                    ("ip", "Show IPv4/IPv6 address bindings"),
+                    ("ping", "Simulate ICMP echo to gateway and DNS servers"),
+                    ("dns", "Query DNS resolver cache and nameservers"),
+                    ("ports", "List open TCP/UDP ports and listeners"),
+                    ("api", "Simulate REST API health-check endpoint"),
+                    ("trace", "Simulate network traceroute to external host"),
                 ];
                 let mut out = String::from("Supported commands:\n");
                 for (name, desc) in &cmds {
@@ -857,6 +865,30 @@ impl ShellDispatcher {
                      ╚══════════════════════════════════════════════════════════════════════════════╝",
                     adapter, ip, mask, gateway, dns, ping, http_code, banner
                 )
+            }
+            "wifi" => {
+                "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    5180 MHz (Channel 36)\n  Link Speed:   867 Mbps (MCS 9, 2x2 MIMO)\n  Signal:       -42 dBm\n  Noise Floor:  -95 dBm\n  SNR:          53 dB\n  State:        CONNECTED (authenticated, associated)".to_string()
+            }
+            "net" => {
+                "Network Interface Configuration:\n  eth0 (VirtIO-Net PCI):\n    Link:    UP | Speed: 1000 Mbps | Duplex: Full\n    MAC:     52:54:00:12:34:56\n    IPv4:    192.168.1.105/24\n    IPv6:    fe80::5054:ff:fe12:3456/64\n    Gateway: 192.168.1.1\n    MTU:     1500 bytes\n    RX:      1024 packets (1507328 bytes)\n    TX:      512 packets (196608 bytes)\n    Errors:  0 dropped, 0 overruns, 0 collisions\n  lo (Loopback):\n    Link:    UP | MTU: 65536\n    IPv4:    127.0.0.1/8\n    IPv6:    ::1/128".to_string()
+            }
+            "ip" => {
+                "IP Address Configuration:\n  Interface   Protocol  Address                  Scope\n  eth0        IPv4      192.168.1.105/24         global\n  eth0        IPv6      fe80::5054:ff:fe12:3456/64  link\n  lo          IPv4      127.0.0.1/8              host\n  lo          IPv6      ::1/128                  host\n  wlan0       IPv4      192.168.1.110/24         global\n  wlan0       IPv6      fe80::a6cf:12ff:fe7b:3e91/64  link\n  Default Route: 192.168.1.1 via eth0 (metric 100)\n  DNS Servers:   1.1.1.1, 8.8.8.8, 8.8.4.4".to_string()
+            }
+            "ping" => {
+                "PING 192.168.1.1 (gateway) 56(84) bytes of data:\n  64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time=2.14 ms\n  64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time=2.29 ms\n  64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time=1.98 ms\n  64 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time=2.33 ms\n--- ping statistics ---\n  4 packets transmitted, 4 received, 0% packet loss\n  rtt min/avg/max = 1.98/2.18/2.33 ms".to_string()
+            }
+            "dns" => {
+                "DNS Resolver Status:\n  Nameserver 1:  1.1.1.1 (Cloudflare) ............ reachable (1.24 ms)\n  Nameserver 2:  8.8.8.8 (Google Public DNS) ...... reachable (4.87 ms)\n  Nameserver 3:  8.8.4.4 (Google Public DNS) ...... reachable (5.12 ms)\n  Search Domain: titanium.local\n  Cache Entries: 47 records (A: 31, AAAA: 12, CNAME: 4)\n  Lookups:\n    titanium.local          -> 192.168.1.105  (A, cached, TTL 3600s)\n    gateway.titanium.local  -> 192.168.1.1    (A, cached, TTL 7200s)\n    api.titanium.local      -> 192.168.1.200  (A, cached, TTL 1800s)\n  DNSSEC: validated | Protocol: DNS-over-TLS (DoT)".to_string()
+            }
+            "ports" => {
+                "Open Ports & Listeners:\n  Proto  Local Address          Foreign Address        State       PID/Program\n  TCP    0.0.0.0:22             0.0.0.0:*              LISTEN      1/sshd\n  TCP    0.0.0.0:80             0.0.0.0:*              LISTEN      2/httpd\n  TCP    0.0.0.0:443            0.0.0.0:*              LISTEN      2/httpd\n  TCP    0.0.0.0:3000           0.0.0.0:*              LISTEN      3/api-server\n  TCP    192.168.1.105:8080     10.0.0.50:49312        ESTABLISHED 4/web-portal\n  UDP    0.0.0.0:53             0.0.0.0:*                          5/dns-resolver\n  UDP    0.0.0.0:67             0.0.0.0:*                          6/dhcpd\n  UDP    0.0.0.0:123            0.0.0.0:*                          7/ntpd\n  Total: 8 sockets (5 TCP, 3 UDP) | 1 ESTABLISHED connection".to_string()
+            }
+            "api" => {
+                "REST API Health Check:\n  Endpoint:     GET https://api.titanium.local/v1/health\n  Status:       200 OK\n  Response:     {\n    \"status\": \"healthy\",\n    \"version\": \"v0.1.0\",\n    \"kernel\": \"Titanium Micro-OS x86_64\",\n    \"student\": \"Yakshendrasinh R Mahida (25BTRCL288)\",\n    \"services\": {\n      \"scheduler\": \"running\",\n      \"memory\": \"operational\",\n      \"banker\": \"safe\",\n      \"network\": \"connected\"\n    },\n    \"requests_served\": 1536,\n    \"avg_latency_ms\": 12.47\n  }".to_string()
+            }
+            "trace" => {
+                "traceroute to 1.1.1.1 (Cloudflare DNS), 30 hops max, 60 byte packets:\n  1  192.168.1.1 (gateway)      1.24 ms   0.98 ms   1.11 ms\n  2  10.0.0.1    (isp-edge)     5.67 ms   4.89 ms   5.23 ms\n  3  172.16.0.1  (core-rtr-1)   8.45 ms   7.91 ms   8.12 ms\n  4  172.16.1.1  (core-rtr-2)  11.33 ms  10.78 ms  11.02 ms\n  5  198.51.100.1 (peering)     14.56 ms  13.89 ms  14.21 ms\n  6  1.1.1.1     (one.one.one)  16.82 ms  15.94 ms  16.37 ms\nTrace complete: 6 hops, avg RTT 16.37 ms, 0% packet loss".to_string()
             }
             unknown => {
                 format!("Unknown command: '{}'. Type 'help' for available commands.", unknown)

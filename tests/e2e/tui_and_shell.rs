@@ -50,14 +50,15 @@ fn t1_shell_28_multi_panel_tui_grid_layout() {
 }
 
 /// `TC-T1-29`: Shell Command: `help`.
-/// Validates `help` lists all 9 supported shell commands.
+/// Validates `help` lists all 17 supported shell commands.
 #[test]
 fn t1_shell_29_shell_command_help() {
     let mut shell = ShellDispatcher::new();
     let output = shell.execute("help");
 
     let required_commands = [
-        "help", "tasks", "sched", "mem", "deadlock", "info", "reset", "clear", "web"
+        "help", "tasks", "sched", "mem", "deadlock", "info", "reset", "clear", "web",
+        "wifi", "net", "ip", "ping", "dns", "ports", "api", "trace"
     ];
 
     for &cmd in &required_commands {

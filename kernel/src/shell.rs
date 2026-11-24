@@ -1,10 +1,11 @@
-//! Interactive Command Shell & Simulated Web Portal for Titanium Micro-OS.
+//! Interactive Command Shell & Simulated Web/Networking Portal for Titanium Micro-OS.
 //!
 //! CS2001 OS Capstone | Student: Yakshendrasinh R Mahida (USN: 25BTRCL288)
 //! Features non-blocking keyboard input from `keyboard::pop_char()`, line editing
 //! state machine (128-char clamp, cursor, backspace, enter, escape), dual serial
-//! and VGA output, history tracking, and all 9 required commands:
-//! `help`, `tasks`, `sched`, `mem`, `deadlock`, `info`, `reset`, `clear`, `web`.
+//! and VGA output, history tracking, and 17 commands:
+//! `help`, `tasks`, `sched`, `mem`, `deadlock`, `info`, `reset`, `clear`, `web`,
+//! `wifi`, `net`, `ip`, `ping`, `dns`, `ports`, `api`, `trace`.
 //!
 //! ZERO floating-point instructions (#![no_std]), zero heap allocations.
 
@@ -222,7 +223,15 @@ impl Shell {
                 let _ = writeln!(fmt, "  info      - System metadata and student USN");
                 let _ = writeln!(fmt, "  reset     - Reset shell state and telemetry");
                 let _ = writeln!(fmt, "  clear     - Clear shell output buffer");
-                let _ = write!(fmt,   "  web       - Display simulated network portal & status viewer");
+                let _ = writeln!(fmt, "  web       - Display simulated network portal & status viewer");
+                let _ = writeln!(fmt, "  wifi      - Show WiFi adapter status and signal metrics");
+                let _ = writeln!(fmt, "  net       - Display full network interface configuration");
+                let _ = writeln!(fmt, "  ip        - Show IPv4/IPv6 address bindings");
+                let _ = writeln!(fmt, "  ping      - Simulate ICMP echo to gateway and DNS servers");
+                let _ = writeln!(fmt, "  dns       - Query DNS resolver cache and nameservers");
+                let _ = writeln!(fmt, "  ports     - List open TCP/UDP ports and listeners");
+                let _ = writeln!(fmt, "  api       - Simulate REST API health-check endpoint");
+                let _ = write!(fmt,   "  trace     - Simulate network traceroute to external host");
                 self.push_output(fmt.as_str());
             }
             "tasks" => {
@@ -353,6 +362,102 @@ impl Shell {
                      ║ Portal Banner:     {:<53}║\n\
                      ╚══════════════════════════════════════════════════════════════════════════════╝",
                     adapter, ip, mask, gateway, dns, ping_whole, ping_frac, http_code, banner
+                );
+                self.push_output(fmt.as_str());
+            }
+            "wifi" => {
+                let ticks = pit::ticks();
+                // Derive a simulated signal strength that varies slightly with uptime
+                let base_signal: i32 = -42;
+                let variation: i32 = ((ticks % 7) as i32) - 3;
+                let signal = base_signal + variation;
+                let noise: i32 = -95;
+                let snr = signal - noise;
+                let link_speed = 867;
+                let channel = 36;
+                let freq = 5180;
+
+                let _ = write!(
+                    fmt,
+                    "WiFi Adapter Status:\n  Interface:    wlan0 (Qualcomm Atheros QCA6174 802.11ac)\n  SSID:         TitaniumOS-5G\n  BSSID:        A4:CF:12:7B:3E:91\n  Security:     WPA3-Personal (SAE)\n  Frequency:    {} MHz (Channel {})\n  Link Speed:   {} Mbps (MCS 9, 2x2 MIMO)\n  Signal:       {} dBm\n  Noise Floor:  {} dBm\n  SNR:          {} dB\n  State:        CONNECTED (authenticated, associated)",
+                    freq, channel, link_speed, signal, noise, snr
+                );
+                self.push_output(fmt.as_str());
+            }
+            "net" => {
+                let ticks = pit::ticks();
+                let rx_bytes = ticks * 1472;
+                let tx_bytes = ticks * 384;
+                let rx_packets = ticks * 2;
+                let tx_packets = ticks;
+
+                let _ = write!(
+                    fmt,
+                    "Network Interface Configuration:\n  eth0 (VirtIO-Net PCI):\n    Link:    UP | Speed: 1000 Mbps | Duplex: Full\n    MAC:     52:54:00:12:34:56\n    IPv4:    192.168.1.105/24\n    IPv6:    fe80::5054:ff:fe12:3456/64\n    Gateway: 192.168.1.1\n    MTU:     1500 bytes\n    RX:      {} packets ({} bytes)\n    TX:      {} packets ({} bytes)\n    Errors:  0 dropped, 0 overruns, 0 collisions\n  lo (Loopback):\n    Link:    UP | MTU: 65536\n    IPv4:    127.0.0.1/8\n    IPv6:    ::1/128",
+                    rx_packets, rx_bytes, tx_packets, tx_bytes
+                );
+                self.push_output(fmt.as_str());
+            }
+            "ip" => {
+                let _ = write!(
+                    fmt,
+                    "IP Address Configuration:\n  Interface   Protocol  Address                  Scope\n  eth0        IPv4      192.168.1.105/24         global\n  eth0        IPv6      fe80::5054:ff:fe12:3456/64  link\n  lo          IPv4      127.0.0.1/8              host\n  lo          IPv6      ::1/128                  host\n  wlan0       IPv4      192.168.1.110/24         global\n  wlan0       IPv6      fe80::a6cf:12ff:fe7b:3e91/64  link\n  Default Route: 192.168.1.1 via eth0 (metric 100)\n  DNS Servers:   1.1.1.1, 8.8.8.8, 8.8.4.4"
+                );
+                self.push_output(fmt.as_str());
+            }
+            "ping" => {
+                let ticks = pit::ticks();
+                // Derive 4 simulated RTT values that look realistic
+                let base_rtt: u32 = 2;
+                let rtt1_frac = ((ticks * 7) % 100) as u32;
+                let rtt2_frac = ((ticks * 13 + 29) % 100) as u32;
+                let rtt3_frac = ((ticks * 3 + 51) % 100) as u32;
+                let rtt4_frac = ((ticks * 11 + 73) % 100) as u32;
+                let avg_frac = (rtt1_frac + rtt2_frac + rtt3_frac + rtt4_frac) / 4;
+
+                let _ = write!(
+                    fmt,
+                    "PING 192.168.1.1 (gateway) 56(84) bytes of data:\n  64 bytes from 192.168.1.1: icmp_seq=1 ttl=64 time={}.{:02} ms\n  64 bytes from 192.168.1.1: icmp_seq=2 ttl=64 time={}.{:02} ms\n  64 bytes from 192.168.1.1: icmp_seq=3 ttl=64 time={}.{:02} ms\n  64 bytes from 192.168.1.1: icmp_seq=4 ttl=64 time={}.{:02} ms\n--- ping statistics ---\n  4 packets transmitted, 4 received, 0% packet loss\n  rtt min/avg/max = {}.{:02}/{}.{:02}/{}.{:02} ms",
+                    base_rtt, rtt1_frac, base_rtt, rtt2_frac,
+                    base_rtt, rtt3_frac, base_rtt, rtt4_frac,
+                    base_rtt, rtt1_frac.min(rtt2_frac).min(rtt3_frac).min(rtt4_frac),
+                    base_rtt, avg_frac,
+                    base_rtt, rtt1_frac.max(rtt2_frac).max(rtt3_frac).max(rtt4_frac)
+                );
+                self.push_output(fmt.as_str());
+            }
+            "dns" => {
+                let _ = write!(
+                    fmt,
+                    "DNS Resolver Status:\n  Nameserver 1:  1.1.1.1 (Cloudflare) ............ reachable (1.24 ms)\n  Nameserver 2:  8.8.8.8 (Google Public DNS) ...... reachable (4.87 ms)\n  Nameserver 3:  8.8.4.4 (Google Public DNS) ...... reachable (5.12 ms)\n  Search Domain: titanium.local\n  Cache Entries: 47 records (A: 31, AAAA: 12, CNAME: 4)\n  Lookups:\n    titanium.local          -> 192.168.1.105  (A, cached, TTL 3600s)\n    gateway.titanium.local  -> 192.168.1.1    (A, cached, TTL 7200s)\n    api.titanium.local      -> 192.168.1.200  (A, cached, TTL 1800s)\n  DNSSEC: validated | Protocol: DNS-over-TLS (DoT)"
+                );
+                self.push_output(fmt.as_str());
+            }
+            "ports" => {
+                let _ = write!(
+                    fmt,
+                    "Open Ports & Listeners:\n  Proto  Local Address          Foreign Address        State       PID/Program\n  TCP    0.0.0.0:22             0.0.0.0:*              LISTEN      1/sshd\n  TCP    0.0.0.0:80             0.0.0.0:*              LISTEN      2/httpd\n  TCP    0.0.0.0:443            0.0.0.0:*              LISTEN      2/httpd\n  TCP    0.0.0.0:3000           0.0.0.0:*              LISTEN      3/api-server\n  TCP    192.168.1.105:8080     10.0.0.50:49312        ESTABLISHED 4/web-portal\n  UDP    0.0.0.0:53             0.0.0.0:*                          5/dns-resolver\n  UDP    0.0.0.0:67             0.0.0.0:*                          6/dhcpd\n  UDP    0.0.0.0:123            0.0.0.0:*                          7/ntpd\n  Total: 8 sockets (5 TCP, 3 UDP) | 1 ESTABLISHED connection"
+                );
+                self.push_output(fmt.as_str());
+            }
+            "api" => {
+                let ticks = pit::ticks();
+                let uptime_secs = ticks / 100;
+                let latency_whole: u32 = 12;
+                let latency_frac = ((ticks * 7 + 3) % 100) as u32;
+                let req_count = ticks * 3;
+
+                let _ = write!(
+                    fmt,
+                    "REST API Health Check:\n  Endpoint:     GET https://api.titanium.local/v1/health\n  Status:       200 OK\n  Response:     {{\n    \"status\": \"healthy\",\n    \"version\": \"v0.1.0\",\n    \"uptime_secs\": {},\n    \"kernel\": \"Titanium Micro-OS x86_64\",\n    \"student\": \"Yakshendrasinh R Mahida (25BTRCL288)\",\n    \"services\": {{\n      \"scheduler\": \"running\",\n      \"memory\": \"operational\",\n      \"banker\": \"safe\",\n      \"network\": \"connected\"\n    }},\n    \"requests_served\": {},\n    \"avg_latency_ms\": {}.{:02}\n  }}",
+                    uptime_secs, req_count, latency_whole, latency_frac
+                );
+                self.push_output(fmt.as_str());
+            }
+            "trace" => {
+                let _ = write!(
+                    fmt,
+                    "traceroute to 1.1.1.1 (Cloudflare DNS), 30 hops max, 60 byte packets:\n  1  192.168.1.1 (gateway)      1.24 ms   0.98 ms   1.11 ms\n  2  10.0.0.1    (isp-edge)     5.67 ms   4.89 ms   5.23 ms\n  3  172.16.0.1  (core-rtr-1)   8.45 ms   7.91 ms   8.12 ms\n  4  172.16.1.1  (core-rtr-2)  11.33 ms  10.78 ms  11.02 ms\n  5  198.51.100.1 (peering)     14.56 ms  13.89 ms  14.21 ms\n  6  1.1.1.1     (one.one.one)  16.82 ms  15.94 ms  16.37 ms\nTrace complete: 6 hops, avg RTT 16.37 ms, 0% packet loss"
                 );
                 self.push_output(fmt.as_str());
             }

@@ -1,29 +1,42 @@
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::process::Command;
 
 fn main() {
-    println!("cargo:rerun-if-changed=kernel");
+    println!("cargo:rerun-if-changed=kernel/src");
+    println!("cargo:rerun-if-changed=kernel/Cargo.toml");
 
     let dist_dir = Path::new("dist");
     let _ = fs::create_dir_all(dist_dir);
 
-    // Read real kernel BIOS image if present
-    let bios_img_path = if Path::new("dist/micro-os-bios.img").exists() {
-        Some(Path::new("dist/micro-os-bios.img"))
+    let bios_img_path = dist_dir.join("micro-os-bios.img");
+    let mut img_rebuilt = false;
+
+    // Locate compiled bare-metal kernel ELF from Cargo artifact dependency
+    if let Some(kernel_bin) = std::env::var_os("CARGO_BIN_FILE_KERNEL_micro-os-kernel") {
+        let kernel_path = PathBuf::from(kernel_bin);
+        if kernel_path.exists() {
+            if let Err(e) = bootloader::BiosBoot::new(&kernel_path).create_disk_image(&bios_img_path) {
+                println!("cargo:warning=Failed to create BIOS disk image: {}", e);
+            } else {
+                img_rebuilt = true;
+            }
+        }
+    }
+
+    // Read kernel BIOS image if present
+    let bios_payload = if bios_img_path.exists() {
+        fs::read(&bios_img_path).ok()
     } else if Path::new("target/micro-os-bios.img").exists() {
-        Some(Path::new("target/micro-os-bios.img"))
+        fs::read("target/micro-os-bios.img").ok()
     } else {
         None
     };
-
-    let bios_payload = bios_img_path.and_then(|p| fs::read(p).ok());
 
     // Build spec-compliant ISO 9660 & El Torito bootable image
     let iso_path = dist_dir.join("micro-os.iso");
     let sector_size = 2048;
 
-    // Base ISO header: 32 sectors minimum (64 KiB)
     let payload_bytes = bios_payload.as_deref().unwrap_or(&[]);
     let payload_sectors = (payload_bytes.len() + sector_size - 1) / sector_size;
     let total_sectors = 20 + payload_sectors.max(12);
@@ -88,23 +101,40 @@ fn main() {
 
     // Build VirtualBox VDI image
     let vdi_path = dist_dir.join("micro-os-bios.vdi");
-    let needs_vdi = !vdi_path.exists() || fs::metadata(&vdi_path).map(|m| m.len() < 1024).unwrap_or(true);
+    let needs_vdi = img_rebuilt
+        || !vdi_path.exists()
+        || fs::metadata(&vdi_path).map(|m| m.len() < 1024).unwrap_or(true);
 
     if needs_vdi {
         let mut converted = false;
-        if let Some(src_img) = bios_img_path {
+        if bios_img_path.exists() {
             let _ = fs::remove_file(&vdi_path);
             let status = Command::new("VBoxManage")
-                .args(["convertfromraw", src_img.to_str().unwrap(), vdi_path.to_str().unwrap(), "--format", "VDI"])
+                .args([
+                    "convertfromraw",
+                    bios_img_path.to_str().unwrap(),
+                    vdi_path.to_str().unwrap(),
+                    "--format",
+                    "VDI",
+                ])
                 .status();
             if let Ok(s) = status {
                 if s.success() {
+                    // Keep deterministic UUID registered in VirtualBox
+                    let _ = Command::new("VBoxManage")
+                        .args([
+                            "internalcommands",
+                            "sethduuid",
+                            vdi_path.to_str().unwrap(),
+                            "848a5ac0-7b66-42d5-953a-4ae55d39208a",
+                        ])
+                        .status();
                     converted = true;
                 }
             }
         }
 
-        if !converted {
+        if !converted && !vdi_path.exists() {
             let mut vdi = vec![0u8; 512];
             let magic_desc = b"<<< Oracle VM VirtualBox Disk Image >>>\n";
             vdi[0..magic_desc.len()].copy_from_slice(magic_desc);

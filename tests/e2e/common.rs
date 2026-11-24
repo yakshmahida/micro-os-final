@@ -139,9 +139,12 @@ pub fn verify_el_torito_boot_catalog(data: &[u8], catalog_sector: u32) -> Result
     if entry[0] != 0x88 {
         return Err(format!("Initial Entry Boot Indicator invalid: expected 0x88, found 0x{:02X}", entry[0]));
     }
-    // Byte 1: Boot media type (0x00 for No Emulation)
-    if entry[1] != 0x00 {
-        return Err(format!("Initial Entry Media Type invalid: expected 0x00 (No Emulation), found 0x{:02X}", entry[1]));
+    // Byte 1: Boot media type (0x00 for No Emulation, 0x04 for Hard Disk Emulation)
+    if entry[1] != 0x00 && entry[1] != 0x04 {
+        return Err(format!(
+            "Initial Entry Media Type invalid: expected 0x00 or 0x04, found 0x{:02X}",
+            entry[1]
+        ));
     }
 
     Ok(())

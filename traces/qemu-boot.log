@@ -1,26 +1,26 @@
 INFO : Framebuffer info: FrameBufferInfo { byte_len: 1440000, width: 800, height: 600, pixel_format: Bgr, bytes_per_pixel: 3, stride: 800 }
 INFO : 4th Stage
-INFO : BiosInfo { stage_4: Region { start: 130000, len: 249a8 }, kernel: Region { start: 1000000, len: 10e3d0 }, ramdisk: Region { start: 110f000, len: 0 }, config_file: Region { start: 110f000, len: 0 }, last_used_addr: 110efff, framebuffer: BiosFramebufferInfo { region: Region { start: e0000000, len: 15f900 }, width: 320, height: 258, bytes_per_pixel: 3, stride: 320, pixel_format: Bgr }, memory_map_addr: 1226c, memory_map_len: 8 }
+INFO : BiosInfo { stage_4: Region { start: 130000, len: 249a8 }, kernel: Region { start: 1000000, len: 110758 }, ramdisk: Region { start: 1111000, len: 0 }, config_file: Region { start: 1111000, len: 0 }, last_used_addr: 1110fff, framebuffer: BiosFramebufferInfo { region: Region { start: e0000000, len: 15f900 }, width: 320, height: 258, bytes_per_pixel: 3, stride: 320, pixel_format: Bgr }, memory_map_addr: 1226c, memory_map_len: 8 }
 INFO : BIOS boot
 INFO : Elf file loaded at Pointer {
     addr: 0x0000000001000000,
-    metadata: 1106896,
+    metadata: 1115992,
 }
 INFO : virtual_address_offset: 0x8000000000
-INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(4), offset: 0, virtual_addr: 0, physical_addr: 0, file_size: 8bc4, mem_size: 8bc4, align: 1000 })
-INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(5), offset: 8bd0, virtual_addr: 9bd0, physical_addr: 9bd0, file_size: 1a18f, mem_size: 1a18f, align: 1000 })
-INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(6), offset: 22d60, virtual_addr: 24d60, physical_addr: 24d60, file_size: 2630, mem_size: 32a0, align: 1000 })
+INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(4), offset: 0, virtual_addr: 0, physical_addr: 0, file_size: 9f6c, mem_size: 9f6c, align: 1000 })
+INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(5), offset: 9f70, virtual_addr: af70, physical_addr: af70, file_size: 1b18f, mem_size: 1b18f, align: 1000 })
+INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(6), offset: 25100, virtual_addr: 27100, physical_addr: 27100, file_size: 27e0, mem_size: 2f00, align: 1000 })
 INFO : Mapping bss section
-INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(6), offset: 25390, virtual_addr: 28390, physical_addr: 28390, file_size: 1ac0, mem_size: 14ec0, align: 1000 })
+INFO : Handling Segment: Ph64(ProgramHeader64 { type_: Ok(Load), flags: Flags(6), offset: 278e0, virtual_addr: 2a8e0, physical_addr: 2a8e0, file_size: 1ac0, mem_size: 15970, align: 1000 })
 INFO : Mapping bss section
-INFO : Entry point at: 0x8000015750
-INFO : Creating GDT at PhysAddr(0x1146000)
+INFO : Entry point at: 0x8000017c20
+INFO : Creating GDT at PhysAddr(0x1147000)
 INFO : Map framebuffer
 INFO : Map physical memory
 INFO : Allocate bootinfo
 INFO : Create Memory Map
 INFO : Create bootinfo
-INFO : Jumping to kernel entry point at VirtAddr(0x8000015750)
+INFO : Jumping to kernel entry point at VirtAddr(0x8000017c20)
 ============================================================
  Titanium Micro-OS: Bare-Metal x86_64 Kernel
  CS2001 OS Capstone | Student: Yakshendrasinh R Mahida (25BTRCL288)
@@ -511,11 +511,16 @@ INFO : Jumping to kernel entry point at VirtAddr(0x8000015750)
 [BOOST] tick=450 all tasks boosted to Q0
 [BOOST] tick=455 all tasks boosted to Q0
 [BOOST] tick=460 all tasks boosted to Q0
+[SPLASH] Progress: 100% [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■]
+[SPLASH] Boot splash animation complete. Clearing VGA display.
 [BOOST] tick=465 all tasks boosted to Q0
 [BOOST] tick=470 all tasks boosted to Q0
 [BOOST] tick=475 all tasks boosted to Q0
 [BOOST] tick=480 all tasks boosted to Q0
+[BOOT] 80x25 TUI Multi-Panel Dashboard initialized.
+Titanium Micro-OS Interactive Shell Ready. Type 'help' for commands.
 [BOOST] tick=485 all tasks boosted to Q0
+[BOOT] Interactive Command Shell ready.
 [BOOST] tick=490 all tasks boosted to Q0
 [BOOST] tick=495 all tasks boosted to Q0
 [BOOST] tick=500 all tasks boosted to Q0
@@ -527,59 +532,3 @@ INFO : Jumping to kernel entry point at VirtAddr(0x8000015750)
 [BOOST] tick=530 all tasks boosted to Q0
 [BOOST] tick=535 all tasks boosted to Q0
 [BOOST] tick=540 all tasks boosted to Q0
-[BOOST] tick=545 all tasks boosted to Q0
-[BOOST] tick=550 all tasks boosted to Q0
-[SPLASH] Progress: 100% [■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■]
-[SPLASH] Boot splash animation complete. Clearing VGA display.
-[BOOST] tick=555 all tasks boosted to Q0
-[BOOST] tick=560 all tasks boosted to Q0
-[BOOST] tick=565 all tasks boosted to Q0
-[BOOST] tick=570 all tasks boosted to Q0
-[BOOT] 80x25 TUI Multi-Panel Dashboard initialized.
-Titanium Micro-OS Interactive Shell Ready. Type 'help' for commands.
-[BOOST] tick=575 all tasks boosted to Q0
-[BOOT] Interactive Command Shell ready.
-[BOOST] tick=580 all tasks boosted to Q0
-[BOOST] tick=585 all tasks boosted to Q0
-Supported commands:
-  help      - Display this list of commands
-  tasks     - List registered tasks and execution states
-  sched     - Show 3-queue MLFQ status & burst ratios
-  mem       - Display 64 KiB Bump Allocator memory usage
-  deadlock  - Show Dijkstra's Banker's Algorithm status
-  info      - System metadata and student USN
-  reset     - Reset shell state and telemetry
-  clear     - Clear shell output buffer
-  web       - Display simulated network portal & status viewer
-[BOOST] tick=590 all tasks boosted to Q0
-[BOOST] tick=595 all tasks boosted to Q0
-[BOOST] tick=600 all tasks boosted to Q0
-[BOOST] tick=605 all tasks boosted to Q0
-MLFQ Scheduler Status:
-  Queues: Q0 (quantum=4ms), Q1 (quantum=8ms), Q2 (quantum=32ms)
-  Boost Interval: 50ms (promotes all ready tasks to Q0)
-  Classification Threshold: Θ < 0.20 (Interactive) vs Θ >= 0.20 (Compute)
-  Active Tasks: 0 | Context Switches: 83
-[BOOST] tick=610 all tasks boosted to Q0
-[BOOST] tick=615 all tasks boosted to Q0
-[BOOST] tick=620 all tasks boosted to Q0
-[BOOST] tick=625 all tasks boosted to Q0
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                TITANIUM MICRO-OS SIMULATED NETWORK PORTAL                   ║
-║                     CS2001 OS Capstone | USN: 25BTRCL288                     ║
-╠══════════════════════════════════════════════════════════════════════════════╣
-║ Network Adapter:   VirtIO-Net (PCI 0x1AF4:0x1000)                       ║
-║ IPv4 Address:      192.168.1.105                                        ║
-║ Subnet Mask:       255.255.255.0                                        ║
-║ Default Gateway:   192.168.1.1                                          ║
-║ DNS Servers:       1.1.1.1, 8.8.8.8                                     ║
-║ Gateway Ping:      2.14 ms (Round-Trip Latency, 0% Packet Loss)              ║
-║ HTTP Request:      GET /portal/index.html -> 200 OK (Content-Length: 4096)   ║
-║ Portal Banner:     Welcome to Titanium Micro-OS Embedded Web Status Viewer!║
-╚══════════════════════════════════════════════════════════════════════════════╝
-[BOOST] tick=630 all tasks boosted to Q0
-[BOOST] tick=635 all tasks boosted to Q0
-[BOOST] tick=640 all tasks boosted to Q0
-[BOOST] tick=645 all tasks boosted to Q0
-[BOOST] tick=650 all tasks boosted to Q0
-[BOOST] tick=655 all tasks boosted to Q0
